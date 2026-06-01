@@ -1,100 +1,226 @@
 <!doctype html>
-<html lang="en">
+<html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>API SDM - DELIVERY</title>
+    <title>eFood - Delivery</title>
     <link rel="stylesheet" href="./style.css" />
-    <script src="./script.js" defer></script>
-
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap"
-      rel="stylesheet"
-    />
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600;700&display=swap" rel="stylesheet" />
   </head>
   <body>
     <header class="header">
       <a href=""><img src="./assets/logo.png" /></a>
-      <div class="header-buttons">
-        <button class="secondary-button">Criar conta</button>
-        <button class="primary-button">Entrar</button>
-      </div>
+      <button id="cart-btn" class="cart-btn" style="display:none" onclick="irParaPedido()">
+        🛒 <span id="cart-count">0</span> item(s)
+      </button>
     </header>
+
     <main class="container">
       <nav class="tabs">
-        <button class="tab active" data-tab="novo">Novo pedido</button>
-        <button class="tab" data-tab="buscar">Buscar pedido</button>
-        <button class="tab" data-tab="atualizar">Atualizar pedido</button>
-        <button class="tab" data-tab="deletar">Deletar pedido</button>
+        <button class="tab active" data-tab="cardapio">Cardápio</button>
+        <button class="tab" data-tab="pedido">Fazer Pedido</button>
+        <button class="tab" data-tab="acompanhamento">Acompanhamento</button>
+        <button class="tab" data-tab="gestao">Gestão</button>
       </nav>
+
       <div class="tab-content">
-        <!-- Novo Pedido -->
-        <div class="tab-panel active" id="novo">
-          <form class="form">
-            <label for="nome">Nome do cliente:</label>
-            <input type="text" id="nome" name="nome" required />
 
-            <label for="produto">Produto:</label>
-            <select id="produto" name="produto" required>
-              <option value="">Selecione um produto</option>
-              <option value="pizza">Pizza</option>
-              <option value="hamburguer">Hambúrguer</option>
-              <option value="sushi">Sushi</option>
+        <!-- ========== CARDÁPIO ========== -->
+        <div class="tab-panel active" id="cardapio">
+          <div class="filter-bar">
+            <select id="filtro-categoria" class="filter-select">
+              <option value="">Todas as categorias</option>
             </select>
-
-            <button type="submit" class="primary-button">Criar pedido</button>
-          </form>
-          <div class="resultado" id="resultado-novo"></div>
+            <label class="checkbox-label">
+              <input type="checkbox" id="filtro-disponivel" checked />
+              Apenas disponíveis
+            </label>
+            <button class="secondary-button small" onclick="carregarCardapio()">Filtrar</button>
+          </div>
+          <div id="produto-grid" class="card-grid">
+            <p class="empty-msg">Carregando cardápio...</p>
+          </div>
         </div>
 
-        <!-- Buscar Pedido -->
-        <div class="tab-panel" id="buscar">
-          <form class="form">
-            <label for="buscar-id">ID do pedido:</label>
-            <input type="text" id="buscar-id" name="id" />
+        <!-- ========== FAZER PEDIDO ========== -->
+        <div class="tab-panel" id="pedido">
+          <div class="two-col">
+            <div class="col">
+              <h3 class="section-title">Carrinho</h3>
+              <div id="carrinho-lista" class="cart-list">
+                <p class="empty-msg">Adicione itens no Cardápio.</p>
+              </div>
+              <div id="carrinho-total" class="cart-total" style="display:none">
+                <span>Total:</span>
+                <strong id="total-valor">R$ 0,00</strong>
+              </div>
+            </div>
+            <div class="col">
+              <h3 class="section-title">Dados do Pedido</h3>
+              <form id="form-pedido" class="form">
+                <label>Email do cliente:</label>
+                <div class="input-row">
+                  <input type="email" id="pedido-email" placeholder="cliente@email.com" />
+                  <button type="button" class="secondary-button small" onclick="buscarClientePedido()">Buscar</button>
+                </div>
+                <div id="cliente-info" class="info-box" style="display:none"></div>
+                <input type="hidden" id="pedido-cliente-id" />
 
-            <button type="submit" class="primary-button">Buscar pedido</button>
-          </form>
-          <div class="resultado" id="resultado-buscar"></div>
+                <label>Endereço de entrega:</label>
+                <input type="text" id="pedido-endereco" placeholder="Rua, número, bairro" />
+
+                <button type="submit" class="primary-button">Confirmar Pedido</button>
+              </form>
+              <div class="resultado" id="resultado-pedido"></div>
+            </div>
+          </div>
         </div>
 
-        <!-- Atualizar Pedido -->
-        <div class="tab-panel" id="atualizar">
-          <form class="form">
-            <label for="atualizar-id">ID do pedido:</label>
-            <input type="text" id="atualizar-id" name="id" required />
-
-            <label for="atualizar-nome">Nome do cliente:</label>
-            <input type="text" id="atualizar-nome" name="nome" required />
-
-            <label for="atualizar-produto">Produto:</label>
-            <select id="atualizar-produto" name="produto" required>
-              <option value="">Selecione um produto</option>
-              <option value="pizza">Pizza</option>
-              <option value="hamburguer">Hambúrguer</option>
-              <option value="sushi">Sushi</option>
-            </select>
-
-            <button type="submit" class="primary-button">
-              Atualizar pedido
-            </button>
+        <!-- ========== ACOMPANHAMENTO ========== -->
+        <div class="tab-panel" id="acompanhamento">
+          <form id="form-rastreio" class="form">
+            <label>Número do pedido:</label>
+            <div class="input-row">
+              <input type="number" id="rastreio-id" placeholder="Ex: 1" min="1" />
+              <button type="submit" class="primary-button">Buscar</button>
+            </div>
           </form>
-          <div class="resultado" id="resultado-atualizar"></div>
+
+          <div id="pedido-detalhe" style="display:none">
+            <div class="order-card">
+              <div class="order-header">
+                <div>
+                  <span class="order-id">Pedido #<span id="det-id"></span></span>
+                  <span id="det-status" class="status-badge"></span>
+                </div>
+                <button id="btn-avancar" class="primary-button small" onclick="avancarStatus()">
+                  Avançar status
+                </button>
+              </div>
+              <div class="order-meta">
+                <p><strong>Cliente:</strong> <span id="det-cliente"></span></p>
+                <p><strong>Endereço:</strong> <span id="det-endereco"></span></p>
+                <p><strong>Data:</strong> <span id="det-data"></span></p>
+              </div>
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Produto</th><th>Qtd</th><th>Unitário</th><th>Subtotal</th>
+                  </tr>
+                </thead>
+                <tbody id="det-itens"></tbody>
+              </table>
+              <div class="order-footer">
+                Total: <strong id="det-total"></strong>
+              </div>
+            </div>
+          </div>
+          <div class="resultado" id="resultado-rastreio"></div>
         </div>
 
-        <!-- Deletar Pedido -->
-        <div class="tab-panel" id="deletar">
-          <form class="form">
-            <label for="deletar-id">ID do pedido:</label>
-            <input type="text" id="deletar-id" name="id" required />
+        <!-- ========== GESTÃO ========== -->
+        <div class="tab-panel" id="gestao">
+          <nav class="sub-tabs">
+            <button class="sub-tab active" data-subtab="g-pedidos">Pedidos</button>
+            <button class="sub-tab" data-subtab="g-clientes">Clientes</button>
+            <button class="sub-tab" data-subtab="g-produtos">Produtos</button>
+          </nav>
 
-            <button type="submit" class="primary-button">Deletar pedido</button>
-          </form>
-          <div class="resultado" id="resultado-deletar"></div>
+          <!-- Gestão: Pedidos -->
+          <div class="sub-tab-panel active" id="g-pedidos">
+            <div class="section-header">
+              <select id="filtro-status" class="filter-select" onchange="carregarPedidos()">
+                <option value="">Todos os status</option>
+                <option value="PENDENTE">Pendente</option>
+                <option value="CONFIRMADO">Confirmado</option>
+                <option value="PREPARANDO">Preparando</option>
+                <option value="PRONTO">Pronto</option>
+                <option value="EM_ENTREGA">Em Entrega</option>
+                <option value="ENTREGUE">Entregue</option>
+                <option value="CANCELADO">Cancelado</option>
+              </select>
+              <button class="secondary-button small" onclick="carregarPedidos()">Atualizar</button>
+            </div>
+            <div id="lista-pedidos" class="item-list">
+              <p class="empty-msg">Carregando pedidos...</p>
+            </div>
+          </div>
+
+          <!-- Gestão: Clientes -->
+          <div class="sub-tab-panel" id="g-clientes">
+            <div class="two-col">
+              <div class="col">
+                <div class="section-header">
+                  <h3 class="section-title">Clientes</h3>
+                  <div class="input-row">
+                    <input type="email" id="buscar-email" placeholder="Buscar por email" />
+                    <button class="secondary-button small" onclick="buscarClienteEmail()">Buscar</button>
+                  </div>
+                  <button class="secondary-button small" onclick="carregarClientes()">Ver todos</button>
+                </div>
+                <div id="lista-clientes" class="item-list">
+                  <p class="empty-msg">Clique em "Ver todos".</p>
+                </div>
+              </div>
+              <div class="col">
+                <h3 class="section-title">Novo cliente</h3>
+                <form id="form-cliente" class="form">
+                  <label>Nome:</label>
+                  <input type="text" id="c-nome" required />
+                  <label>Email:</label>
+                  <input type="email" id="c-email" required />
+                  <label>Telefone:</label>
+                  <input type="tel" id="c-telefone" required placeholder="(11) 99999-9999" />
+                  <label>Endereço:</label>
+                  <input type="text" id="c-endereco" required placeholder="Rua, número, bairro" />
+                  <button type="submit" class="primary-button">Cadastrar</button>
+                </form>
+                <div class="resultado" id="resultado-cliente"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Gestão: Produtos -->
+          <div class="sub-tab-panel" id="g-produtos">
+            <div class="two-col">
+              <div class="col">
+                <div class="section-header">
+                  <h3 class="section-title">Produtos</h3>
+                  <button class="secondary-button small" onclick="carregarProdutosGestao()">Atualizar</button>
+                </div>
+                <div id="lista-produtos" class="item-list">
+                  <p class="empty-msg">Carregando...</p>
+                </div>
+              </div>
+              <div class="col">
+                <h3 class="section-title">Novo produto</h3>
+                <form id="form-produto" class="form">
+                  <label>Nome:</label>
+                  <input type="text" id="p-nome" required />
+                  <label>Descrição:</label>
+                  <input type="text" id="p-descricao" placeholder="Opcional" />
+                  <label>Preço (R$):</label>
+                  <input type="number" id="p-preco" step="0.01" min="0.01" required />
+                  <label>Categoria:</label>
+                  <input type="text" id="p-categoria" required placeholder="Ex: Pizza, Bebida" />
+                  <label class="checkbox-label">
+                    <input type="checkbox" id="p-disponivel" checked />
+                    Disponível
+                  </label>
+                  <button type="submit" class="primary-button">Cadastrar</button>
+                </form>
+                <div class="resultado" id="resultado-produto"></div>
+              </div>
+            </div>
+          </div>
+
         </div>
       </div>
     </main>
+
+    <div id="toast" class="toast"></div>
+    <script src="./script.js"></script>
   </body>
 </html>
