@@ -84,22 +84,16 @@ document
     try {
       const res = await fetch(`${API_URL}/${id}`, { method: "DELETE" });
 
-      // Verifica se a requisição foi feita com sucesso (Status 200-299, incluindo o 204 No Content)
       if (res.ok) {
-        // Envia um objeto com a mensagem de sucesso em vez dos dados do pedido
         exibirResultado("resultado-deletar", { status: "Sucesso", mensagem: `Pedido nº ${id} foi deletado corretamente!` });
-        
-        // Opcional: Limpa o campo de texto do ID após deletar
         document.getElementById("deletar-id").value = "";
       } else if (res.status === 404) {
-        // Trata o caso do ID não existir no banco de dados (Retorno do Spring)
         exibirResultado("resultado-deletar", { erro: `Pedido nº ${id} não foi encontrado.` });
       } else {
         exibirResultado("resultado-deletar", { erro: "Não foi possível deletar o pedido." });
       }
 
     } catch (err) {
-      // Trata erros de rede ou caso o servidor esteja desligado
       exibirResultado("resultado-deletar", { erro: "Erro de conexão ao tentar deletar o pedido" });
     }
   });
