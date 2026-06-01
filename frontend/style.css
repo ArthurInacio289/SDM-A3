@@ -1,0 +1,160 @@
+/* Global */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Roboto", sans-serif;
+}
+
+body {
+  background-color: #ebebeb;
+  height: 100vh;
+}
+
+button {
+  padding: 12px 32px;
+  font-size: 16px;
+  font-weight: 500;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+/* Header */
+
+.header {
+  height: 80px;
+  background-color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 40px;
+}
+
+.header img {
+  height: 32px;
+}
+
+.header-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+/* Buttons */
+
+.primary-button {
+  background-color: #6f1dd9;
+  color: #fff;
+  border: none;
+}
+
+.primary-button:hover {
+  opacity: 0.9;
+}
+
+.secondary-button {
+  background-color: #fff;
+  color: #6f1dd9;
+  border: none;
+}
+
+/* Container */
+
+.container {
+  max-width: 800px;
+  margin: 40px auto;
+  background-color: #fff;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+/* Tabs */
+
+.tabs {
+  display: flex;
+  border-bottom: 2px solid #ebebeb;
+}
+
+.tab {
+  flex: 1;
+  padding: 14px;
+  background: none;
+  border: none;
+  border-radius: 0;
+  font-size: 14px;
+  color: #666;
+  border-bottom: 3px solid transparent;
+}
+
+.tab.active {
+  color: #6f1dd9;
+  border-bottom-color: #6f1dd9;
+  font-weight: 600;
+}
+
+.tab:hover {
+  background-color: #f5f5f5;
+}
+
+.tab-panel {
+  display: none;
+  padding: 30px;
+}
+
+.tab-panel.active {
+  display: block;
+}
+
+/* Form */
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.form label {
+  font-size: 14px;
+  font-weight: 500;
+  color: #333;
+}
+
+.form input,
+.form select {
+  padding: 12px;
+  font-size: 14px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  outline: none;
+}
+
+.form input:focus,
+.form select:focus {
+  border-color: #6f1dd9;
+}
+
+.form .primary-button {
+  margin-top: 10px;
+  align-self: flex-start;
+}
+
+/* Resultado */
+
+.resultado {
+  margin-top: 20px;
+  padding: 15px;
+  background-color: #f5f5f5;
+  border-radius: 5px;
+  font-size: 13px;
+  overflow-x: auto;
+  display: none;
+}
+
+.resultado:has(pre) {
+  display: block;
+}
+
+.resultado pre {
+  white-space: pre-wrap;
+  word-break: break-word;
+}
