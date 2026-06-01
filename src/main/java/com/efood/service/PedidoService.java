@@ -1,48 +1,101 @@
 package com.efood.service;
 
-import com.efood.model.Pedido;
+import com.efood.dto.ItemPedidoRequestDTO;
+import com.efood.dto.PedidoRequestDTO;
+import com.efood.dto.PedidoResponseDTO;
+import com.efood.exception.RecursoNaoEncontradoException;
+import com.efood.model.*;
+import com.efood.repository.ClienteRepository;
 import com.efood.repository.PedidoRepository;
+import com.efood.repository.ProdutoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class PedidoService {
 
     @Autowired
-    private PedidoRepository repository;
+    private PedidoRepository pedidoRepository;
 
-    public List<Pedido> listarTodos() {
-        return repository.findAll();
-    }
+    @Autowired
+    private ClienteRepository clienteRepository;
 
-    public Optional<Pedido> buscarPorId(Long id) {
-        return repository.findById(id);
-    }
+    @Autowired
+    private ProdutoRepository produtoRepository;
 
-    public Pedido criar(Pedido pedido) {
-        if (pedido.getDataPedido() == null) {
-            pedido.setDataPedido(LocalDateTime.now());
+    public List<PedidoResponseDTO> listarTodos(StatusPedido status, Long clienteId) {
+        List<Pedido> pedidos;
+
+        if (status != null && clienteId != null) {
+            pedidos = pedidoRepository.findByClienteIdAndStatus(clienteId, status);
+        } else if (status != null) {
+            pedidos = pedidoRepository.findByStatus(status);
+        } else if (clienteId != null) {
+            pedidos = pedidoRepository.findByClienteId(clienteId);
+        } else {
+            pedidos = pedidoRepository.findAll();
         }
-        return repository.save(pedido);
+
+        return pedidos.stream().map(PedidoResponseDTO::fromEntity).toList();
     }
 
-    public Pedido atualizar(Long id, Pedido dadosAtualizados) {
-        return repository.findById(id).map(pedido -> {
-            pedido.setCliente(dadosAtualizados.getCliente());
-            pedido.setItens(dadosAtualizados.getItens());
-            pedido.setValorTotal(dadosAtualizados.getValorTotal());
-            pedido.setStatus(dadosAtualizados.getStatus());
-            return repository.save(pedido);
-        }).orElseThrow(() -> new RuntimeException("Pedido não encontrado com o ID: " + id));
+    public PedidoResponseDTO buscarPorId(Long id) {
+        return pedidoRepository.findById(id)
+                .map(PedidoResponseDTO::fromEntity)
+                .orElseThrow(() -> new RecursoNaoEncontradoException("Pedido não encontrado com o ID: " + id));
+    }
+
+    @Transactional
+    public PedidoResponseDTO criar(PedidoRequestDTO dto) {
+        Cliente cliente = clienteRepository.findById(dto.getClienteId())
+                .orElseThrow(() -> new RecursoNaoEncontradoException("Cliente não encontrado com o ID: " + dto.getClienteId()));
+
+        Pedido pedido = new Pedido();
+        pedido.setCliente(cliente);
+        pedido.setEnderecoEntrega(dto.getEnderecoEntrega());
+        pedido.setDataPedido(LocalDateTime.now());
+        pedido.setStatus(StatusPedido.PENDENTE);
+
+        List<ItemPedido> itens = dto.getItens().stream().map(itemDto -> montarItem(itemDto, pedido)).toList();
+        pedido.setItens(itens);
+        pedido.setValorTotal(calcularTotal(itens));
+
+        return PedidoResponseDTO.fromEntity(pedidoRepository.save(pedido));
+    }
+
+    public PedidoResponseDTO atualizarStatus(Long id, StatusPedido novoStatus) {
+        return pedidoRepository.findById(id).map(pedido -> {
+            pedido.setStatus(novoStatus);
+            return PedidoResponseDTO.fromEntity(pedidoRepository.save(pedido));
+        }).orElseThrow(() -> new RecursoNaoEncontradoException("Pedido não encontrado com o ID: " + id));
     }
 
     public void deletar(Long id) {
-        if (!repository.existsById(id)) {
-            throw new RuntimeException("Pedido não encontrado com o ID: " + id);
+        if (!pedidoRepository.existsById(id)) {
+            throw new RecursoNaoEncontradoException("Pedido não encontrado com o ID: " + id);
         }
-        repository.deleteById(id);
+        pedidoRepository.deleteById(id);
+    }
+
+    private ItemPedido montarItem(ItemPedidoRequestDTO dto, Pedido pedido) {
+        Produto produto = produtoRepository.findById(dto.getProdutoId())
+                .orElseThrow(() -> new RecursoNaoEncontradoException("Produto não encontrado com o ID: " + dto.getProdutoId()));
+        ItemPedido item = new ItemPedido();
+        item.setPedido(pedido);
+        item.setProduto(produto);
+        item.setQuantidade(dto.getQuantidade());
+        item.setPrecoUnitario(produto.getPreco());
+        return item;
+    }
+
+    private BigDecimal calcularTotal(List<ItemPedido> itens) {
+        return itens.stream()
+                .map(item -> item.getPrecoUnitario().multiply(BigDecimal.valueOf(item.getQuantidade())))
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 }

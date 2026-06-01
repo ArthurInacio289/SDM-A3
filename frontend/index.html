@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>API SDM - DELIVERY</title>
+    <link rel="stylesheet" href="./style.css" />
+    <script src="./script.js" defer></script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <header class="header">
+      <a href=""><img src="./assets/logo.png" /></a>
+      <div class="header-buttons">
+        <button class="secondary-button">Criar conta</button>
+        <button class="primary-button">Entrar</button>
+      </div>
+    </header>
+    <main class="container">
+      <nav class="tabs">
+        <button class="tab active" data-tab="novo">Novo pedido</button>
+        <button class="tab" data-tab="buscar">Buscar pedido</button>
+        <button class="tab" data-tab="atualizar">Atualizar pedido</button>
+        <button class="tab" data-tab="deletar">Deletar pedido</button>
+      </nav>
+      <div class="tab-content">
+        <!-- Novo Pedido -->
+        <div class="tab-panel active" id="novo">
+          <form class="form">
+            <label for="nome">Nome do cliente:</label>
+            <input type="text" id="nome" name="nome" required />
+
+            <label for="produto">Produto:</label>
+            <select id="produto" name="produto" required>
+              <option value="">Selecione um produto</option>
+              <option value="pizza">Pizza</option>
+              <option value="hamburguer">Hambúrguer</option>
+              <option value="sushi">Sushi</option>
+            </select>
+
+            <button type="submit" class="primary-button">Criar pedido</button>
+          </form>
+          <div class="resultado" id="resultado-novo"></div>
+        </div>
+
+        <!-- Buscar Pedido -->
+        <div class="tab-panel" id="buscar">
+          <form class="form">
+            <label for="buscar-id">ID do pedido:</label>
+            <input type="text" id="buscar-id" name="id" />
+
+            <button type="submit" class="primary-button">Buscar pedido</button>
+          </form>
+          <div class="resultado" id="resultado-buscar"></div>
+        </div>
+
+        <!-- Atualizar Pedido -->
+        <div class="tab-panel" id="atualizar">
+          <form class="form">
+            <label for="atualizar-id">ID do pedido:</label>
+            <input type="text" id="atualizar-id" name="id" required />
+
+            <label for="atualizar-nome">Nome do cliente:</label>
+            <input type="text" id="atualizar-nome" name="nome" required />
+
+            <label for="atualizar-produto">Produto:</label>
+            <select id="atualizar-produto" name="produto" required>
+              <option value="">Selecione um produto</option>
+              <option value="pizza">Pizza</option>
+              <option value="hamburguer">Hambúrguer</option>
+              <option value="sushi">Sushi</option>
+            </select>
+
+            <button type="submit" class="primary-button">
+              Atualizar pedido
+            </button>
+          </form>
+          <div class="resultado" id="resultado-atualizar"></div>
+        </div>
+
+        <!-- Deletar Pedido -->
+        <div class="tab-panel" id="deletar">
+          <form class="form">
+            <label for="deletar-id">ID do pedido:</label>
+            <input type="text" id="deletar-id" name="id" required />
+
+            <button type="submit" class="primary-button">Deletar pedido</button>
+          </form>
+          <div class="resultado" id="resultado-deletar"></div>
+        </div>
+      </div>
+    </main>
+  </body>
+</html>

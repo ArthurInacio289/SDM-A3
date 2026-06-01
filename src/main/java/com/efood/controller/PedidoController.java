@@ -1,7 +1,11 @@
 package com.efood.controller;
 
-import com.efood.model.Pedido;
+import com.efood.dto.PedidoRequestDTO;
+import com.efood.dto.PedidoResponseDTO;
+import com.efood.dto.StatusUpdateDTO;
+import com.efood.model.StatusPedido;
 import com.efood.service.PedidoService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,53 +15,45 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/pedidos")
-@CrossOrigin(origins = "*") // Permite integração futura com o frontend de forma simples
+@CrossOrigin(origins = "*")
 public class PedidoController {
 
     @Autowired
     private PedidoService service;
 
-    // GET /pedidos - listar todos pedidos
+    // GET /pedidos?status=PENDENTE&clienteId=1
     @GetMapping
-    public ResponseEntity<List<Pedido>> listarTodos() {
-        List<Pedido> pedidos = service.listarTodos();
-        return ResponseEntity.ok(pedidos);
+    public ResponseEntity<List<PedidoResponseDTO>> listarTodos(
+            @RequestParam(required = false) StatusPedido status,
+            @RequestParam(required = false) Long clienteId) {
+        return ResponseEntity.ok(service.listarTodos(status, clienteId));
     }
 
-    // GET /pedidos/{id} - buscar pedido pelo ID
     @GetMapping("/{id}")
-    public ResponseEntity<Pedido> buscarPorId(@PathVariable Long id) {
-        return service.buscarPorId(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<PedidoResponseDTO> buscarPorId(@PathVariable Long id) {
+        return ResponseEntity.ok(service.buscarPorId(id));
     }
 
-    // POST /pedidos - criar pedido
+    // GET /pedidos/cliente/{clienteId}
+    @GetMapping("/cliente/{clienteId}")
+    public ResponseEntity<List<PedidoResponseDTO>> listarPorCliente(@PathVariable Long clienteId) {
+        return ResponseEntity.ok(service.listarTodos(null, clienteId));
+    }
+
     @PostMapping
-    public ResponseEntity<Pedido> criar(@RequestBody Pedido pedido) {
-        Pedido novoPedido = service.criar(pedido);
-        return ResponseEntity.status(HttpStatus.CREATED).body(novoPedido);
+    public ResponseEntity<PedidoResponseDTO> criar(@Valid @RequestBody PedidoRequestDTO dto) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(service.criar(dto));
     }
 
-    // PUT /pedidos/{id} - atualizar pedido pelo ID
-    @PutMapping("/{id}")
-    public ResponseEntity<Pedido> atualizar(@PathVariable Long id, @RequestBody Pedido pedido) {
-        try {
-            Pedido pedidoAtualizado = service.atualizar(id, pedido);
-            return ResponseEntity.ok(pedidoAtualizado);
-        } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build();
-        }
+    // PATCH /pedidos/{id}/status   body: {"status": "CONFIRMADO"}
+    @PatchMapping("/{id}/status")
+    public ResponseEntity<PedidoResponseDTO> atualizarStatus(@PathVariable Long id, @Valid @RequestBody StatusUpdateDTO dto) {
+        return ResponseEntity.ok(service.atualizarStatus(id, dto.getStatus()));
     }
 
-    // DELETE /pedidos/{id} - deletar pedido pelo ID
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletar(@PathVariable Long id) {
-        try {
-            service.deletar(id);
-            return ResponseEntity.noContent().build();
-        } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build();
-        }
+        service.deletar(id);
+        return ResponseEntity.noContent().build();
     }
 }
