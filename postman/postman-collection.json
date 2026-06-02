@@ -1,0 +1,550 @@
+{
+  "openapi": "3.0.1",
+  "info": { "title": "OpenAPI definition", "version": "v0" },
+  "servers": [
+    { "url": "http://localhost:8080", "description": "Generated server url" }
+  ],
+  "paths": {
+    "/produtos/{id}": {
+      "get": {
+        "tags": ["produto-controller"],
+        "operationId": "buscarPorId",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer", "format": "int64" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": { "$ref": "#/components/schemas/ProdutoResponseDTO" }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": ["produto-controller"],
+        "operationId": "atualizar",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer", "format": "int64" }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/ProdutoRequestDTO" }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": { "$ref": "#/components/schemas/ProdutoResponseDTO" }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["produto-controller"],
+        "operationId": "deletar",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer", "format": "int64" }
+          }
+        ],
+        "responses": { "200": { "description": "OK" } }
+      }
+    },
+    "/clientes/{id}": {
+      "get": {
+        "tags": ["cliente-controller"],
+        "operationId": "buscarPorId_2",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer", "format": "int64" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": { "$ref": "#/components/schemas/ClienteResponseDTO" }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": ["cliente-controller"],
+        "operationId": "atualizar_1",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer", "format": "int64" }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/ClienteRequestDTO" }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": { "$ref": "#/components/schemas/ClienteResponseDTO" }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["cliente-controller"],
+        "operationId": "deletar_2",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer", "format": "int64" }
+          }
+        ],
+        "responses": { "200": { "description": "OK" } }
+      }
+    },
+    "/produtos": {
+      "get": {
+        "tags": ["produto-controller"],
+        "operationId": "listarTodos",
+        "parameters": [
+          {
+            "name": "categoria",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "disponivel",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "boolean" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/ProdutoResponseDTO" }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["produto-controller"],
+        "operationId": "criar",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/ProdutoRequestDTO" }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": { "$ref": "#/components/schemas/ProdutoResponseDTO" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/pedidos": {
+      "get": {
+        "tags": ["pedido-controller"],
+        "operationId": "listarTodos_1",
+        "parameters": [
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "PENDENTE",
+                "CONFIRMADO",
+                "PREPARANDO",
+                "PRONTO",
+                "EM_ENTREGA",
+                "ENTREGUE",
+                "CANCELADO"
+              ]
+            }
+          },
+          {
+            "name": "clienteId",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "integer", "format": "int64" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/PedidoResponseDTO" }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["pedido-controller"],
+        "operationId": "criar_1",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/PedidoRequestDTO" }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": { "$ref": "#/components/schemas/PedidoResponseDTO" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/clientes": {
+      "get": {
+        "tags": ["cliente-controller"],
+        "operationId": "listarTodos_2",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/ClienteResponseDTO" }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["cliente-controller"],
+        "operationId": "criar_2",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/ClienteRequestDTO" }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": { "$ref": "#/components/schemas/ClienteResponseDTO" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/pedidos/{id}/status": {
+      "patch": {
+        "tags": ["pedido-controller"],
+        "operationId": "atualizarStatus",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer", "format": "int64" }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/StatusUpdateDTO" }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": { "$ref": "#/components/schemas/PedidoResponseDTO" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/produtos/categorias": {
+      "get": {
+        "tags": ["produto-controller"],
+        "operationId": "listarCategorias",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": { "type": "array", "items": { "type": "string" } }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/pedidos/{id}": {
+      "get": {
+        "tags": ["pedido-controller"],
+        "operationId": "buscarPorId_1",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer", "format": "int64" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": { "$ref": "#/components/schemas/PedidoResponseDTO" }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["pedido-controller"],
+        "operationId": "deletar_1",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer", "format": "int64" }
+          }
+        ],
+        "responses": { "200": { "description": "OK" } }
+      }
+    },
+    "/pedidos/cliente/{clienteId}": {
+      "get": {
+        "tags": ["pedido-controller"],
+        "operationId": "listarPorCliente",
+        "parameters": [
+          {
+            "name": "clienteId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer", "format": "int64" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/PedidoResponseDTO" }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/clientes/buscar": {
+      "get": {
+        "tags": ["cliente-controller"],
+        "operationId": "buscarPorEmail",
+        "parameters": [
+          {
+            "name": "email",
+            "in": "query",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": { "$ref": "#/components/schemas/ClienteResponseDTO" }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "ProdutoRequestDTO": {
+        "required": ["categoria", "nome", "preco"],
+        "type": "object",
+        "properties": {
+          "nome": { "type": "string" },
+          "descricao": { "type": "string" },
+          "preco": { "type": "number" },
+          "categoria": { "type": "string" },
+          "disponivel": { "type": "boolean" }
+        }
+      },
+      "ProdutoResponseDTO": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer", "format": "int64" },
+          "nome": { "type": "string" },
+          "descricao": { "type": "string" },
+          "preco": { "type": "number" },
+          "categoria": { "type": "string" },
+          "disponivel": { "type": "boolean" }
+        }
+      },
+      "ClienteRequestDTO": {
+        "required": ["email", "endereco", "nome", "telefone"],
+        "type": "object",
+        "properties": {
+          "nome": { "type": "string" },
+          "email": { "type": "string" },
+          "telefone": { "type": "string" },
+          "endereco": { "type": "string" }
+        }
+      },
+      "ClienteResponseDTO": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer", "format": "int64" },
+          "nome": { "type": "string" },
+          "email": { "type": "string" },
+          "telefone": { "type": "string" },
+          "endereco": { "type": "string" }
+        }
+      },
+      "ItemPedidoRequestDTO": {
+        "required": ["produtoId", "quantidade"],
+        "type": "object",
+        "properties": {
+          "produtoId": { "type": "integer", "format": "int64" },
+          "quantidade": { "type": "integer", "format": "int32" }
+        }
+      },
+      "PedidoRequestDTO": {
+        "required": ["clienteId", "enderecoEntrega", "itens"],
+        "type": "object",
+        "properties": {
+          "clienteId": { "type": "integer", "format": "int64" },
+          "itens": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/ItemPedidoRequestDTO" }
+          },
+          "enderecoEntrega": { "type": "string" }
+        }
+      },
+      "ItemPedidoResponseDTO": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer", "format": "int64" },
+          "produto": { "$ref": "#/components/schemas/ProdutoResponseDTO" },
+          "quantidade": { "type": "integer", "format": "int32" },
+          "precoUnitario": { "type": "number" },
+          "subtotal": { "type": "number" }
+        }
+      },
+      "PedidoResponseDTO": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer", "format": "int64" },
+          "cliente": { "$ref": "#/components/schemas/ClienteResponseDTO" },
+          "itens": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/ItemPedidoResponseDTO" }
+          },
+          "valorTotal": { "type": "number" },
+          "status": { "type": "string" },
+          "enderecoEntrega": { "type": "string" },
+          "dataPedido": { "type": "string", "format": "date-time" }
+        }
+      },
+      "StatusUpdateDTO": {
+        "required": ["status"],
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "PENDENTE",
+              "CONFIRMADO",
+              "PREPARANDO",
+              "PRONTO",
+              "EM_ENTREGA",
+              "ENTREGUE",
+              "CANCELADO"
+            ]
+          }
+        }
+      }
+    }
+  }
+}
